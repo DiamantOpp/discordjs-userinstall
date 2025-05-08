@@ -21,7 +21,7 @@ module.exports = {
         const history = properties.history;
         const index = interaction.channelId;
         assert(process.env.INIT_AI, 'INIT_AI is undefined in .env, the AI will very likely NOT work as expected!');
-        history[index] = history[index]?? [
+        if (!history[index]) history[index] = [
             {
                 role: 'system', content: process.env.INIT_AI
                ?.replaceAll('\\n', '\n')
