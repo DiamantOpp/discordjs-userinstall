@@ -1,0 +1,34 @@
+{
+  "name": "discordjs-userinstall",
+  "version": "1.0.0",
+  "description": "User installable bot for Discord.js.",
+  "keywords": [
+    "discordjs",
+    "discord",
+    "js",
+    "typescript",
+    "ts"
+  ],
+  "homepage": "https://github.com/Pontanter/discordjs-userinstall#readme",
+  "bugs": {
+    "url": "https://github.com/Pontanter/discordjs-userinstall/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pontanter/discordjs-userinstall.git"
+  },
+  "license": "MIT",
+  "author": "Pontanter",
+  "type": "commonjs",
+  "main": "dist/Index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.12"
+  }
+}
