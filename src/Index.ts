@@ -1,10 +1,11 @@
-import { Client, Events, GatewayIntentBits, Partials, REST, Routes, Interaction, Guild, SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Partials, REST, Routes, Interaction, SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { readdirSync, writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
 import * as dotenv from 'dotenv';
 
 let history = JSON.parse(readFileSync('history.json', {encoding: 'utf-8'}));
 
+// Some helper methods for formatting -> better output/debugging readability
 const log = (...args: string[]) => console.log(`[LOG] ${args.join(' ')}`);
 const info = (...args: string[]) => console.info(`[INFO] ${args.join(' ')}`);
 const warn = (...args: string[]) => console.warn(`[WARN] ${args.join(' ')}`);
@@ -19,12 +20,10 @@ const assert = (condition: any, ...args: string[]) => {
 }
 
 dotenv.config();
-const env = {
-    TOKEN: process.env.TOKEN,
-    CLIENT_ID: process.env.CLIENT_ID
-};
-assert(env.TOKEN, 'TOKEN is not defined');
-assert(env.CLIENT_ID, 'CLIENT_ID is not defined');
+
+assert(process.env.TOKEN,     'TOKEN is not defined'    );
+assert(process.env.CLIENT_ID, 'CLIENT_ID is not defined');
+assert(process.env.API_KEY,   'API_KEY is not defined'  );
 
 type command = {
     data: SlashCommandBuilder,
@@ -48,20 +47,16 @@ readdirSync(join(__dirname, 'commands')).forEach((module: string) => {
 });
 
 const client = new Client({
-    intents: Object.values(GatewayIntentBits) as GatewayIntentBits[],
-    partials: Object.values(Partials) as Partials[],
+    intents: Object.values(GatewayIntentBits) as GatewayIntentBits[], // all intents  (me being lazy)
+    partials: Object.values(Partials) as Partials[],                  // all partials (me being lazy)
 });
 
 client.once(Events.ClientReady, () => {
-    const rest = new REST({ version: '10' }).setToken(env.TOKEN?? '');
+    const rest = new REST({ version: '10' }).setToken(process.env.TOKEN?? '');
     info('Refreshing application (/) commands.');
-    rest.put(Routes.applicationCommands(env.CLIENT_ID?? ''), { body: commands })
-        .then(() => {
-            info('Successfully reloaded application (/) commands.');
-        })
-        .catch((err) => {
-            error('Failed to refresh application (/) commands:', err);
-        });
+    rest.put(Routes.applicationCommands(process.env.CLIENT_ID?? ''), { body: commands })
+        .then(() => info('Successfully reloaded application (/) commands.'))
+        .catch(err => error('Failed to refresh application (/) commands:', err));
     info('Successfully refreshed application (/) commands.');
     info(`${client.user?.tag} is ready!`);
 });
@@ -74,10 +69,15 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
         log(`@${interaction.user.tag} ran /${interaction.commandName}`);
         if (command.execute)
             try {
-                await command.execute(interaction, interaction.commandName === 'chat'? {history: history, updateCallback: newHistory => {
-                    history = newHistory;
-                    writeFileSync('history.json', JSON.stringify(history, undefined, 4));
-                }} : {client: client});
+                await command.execute(
+                    interaction,
+                    interaction.commandName === 'chat'? {history: history, updateCallback: newHistory => {
+                        history = newHistory;
+                        writeFileSync('history.json', JSON.stringify(history, undefined, 4));
+                    }}:
+                    interaction.commandName === 'ping'? {client: client}:
+                    {}
+                ); // a ternary switch like this is not really good practice, but it works and is expandable, so I don't really care
             } catch (err) {
                 error(`Command ${interaction.commandName} failed:`, err);
                 await interaction.reply({content: `:x: Command failed: ${err}`});
@@ -87,4 +87,4 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     } else await interaction.reply({content: `:x: ${interaction.commandName??''} is missing field \`this\``});
 });
 
-client.login(env.TOKEN);
+client.login(process.env.TOKEN);

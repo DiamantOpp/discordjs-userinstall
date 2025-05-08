@@ -9,7 +9,7 @@ type historyType  = {[key: string]: messagesType};
 module.exports = {
     data: new SlashCommandBuilder()
           .setName('chat')
-          .setDescription('Chat with le idiote')
+          .setDescription('Chat with le idiote') // do change this for your own forks, lol
           .setIntegrationTypes(1)
           .setContexts(0, 1, 2)
           .addStringOption(option =>
@@ -20,8 +20,23 @@ module.exports = {
     execute: async (interaction: ChatInputCommandInteraction, properties: {history: historyType, updateCallback: (history: historyType) => void}) => {
         const history = properties.history;
         const index = interaction.channelId;
-        assert(process.env.INIT_AI, 'INIT_AI is undefined in .env, the AI will NOT work as expected!');
-        if (!history[index]) history[index] = [{role: 'system', content: process.env.INIT_AI?.replaceAll('\\n', '\n').replaceAll('$who', `@${interaction.user.username}`).replaceAll('$time', new Date().toLocaleString('sv-SE').replace(' ', 'T')+'.000Z')?? ''}]
+        assert(process.env.INIT_AI, 'INIT_AI is undefined in .env, the AI will very likely NOT work as expected!');
+        history[index] = history[index]?? [
+            {
+                role: 'system', content: process.env.INIT_AI
+               ?.replaceAll('\\n', '\n')
+                .replaceAll('$who', `@${interaction.user.username}`)
+                .replaceAll(
+                    '$time',
+                    new Date()
+                    .toLocaleString('sv-SE')
+                    .replace(' ', 'T')
+                    +'.000Z')
+                ?? ''
+            }
+        ]
+        if (history[index].length > 45)
+            history[index] = [history[index][0], ...history[index].slice(-44)];
         const prompt = interaction.options.getString('prompt');
         if (!prompt)
             return interaction.reply(':x: No prompt provided');
