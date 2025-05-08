@@ -1,9 +1,9 @@
 import { Client, Events, GatewayIntentBits, Partials, REST, Routes, Interaction, SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { readdirSync, writeFileSync, readFileSync } from 'fs';
+import { readdirSync, writeFileSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import * as dotenv from 'dotenv';
 
-let history = JSON.parse(readFileSync('history.json', {encoding: 'utf-8'}));
+let history = existsSync('history.json')? JSON.parse(readFileSync('history.json', {encoding: 'utf-8'})) : {};
 
 // Some helper methods for formatting -> better output/debugging readability
 const log = (...args: string[]) => console.log(`[LOG] ${args.join(' ')}`);
