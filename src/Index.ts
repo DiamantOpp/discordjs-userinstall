@@ -55,9 +55,8 @@ client.once(Events.ClientReady, () => {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN?? '');
     info('Refreshing application (/) commands.');
     rest.put(Routes.applicationCommands(process.env.CLIENT_ID?? ''), { body: commands })
-        .then(() => info('Successfully reloaded application (/) commands.'))
+        .then(() => info('Successfully refreshed application (/) commands.'))
         .catch(err => error('Failed to refresh application (/) commands:', err));
-    info('Successfully refreshed application (/) commands.');
     info(`${client.user?.tag} is ready!`);
 });
 
