@@ -3,8 +3,7 @@ import { readdirSync, writeFileSync, readFileSync } from 'fs';
 import { join } from 'path';
 import * as dotenv from 'dotenv';
 
-const history = JSON.parse(readFileSync('history.json', {encoding: 'utf-8'}));
-let historyClyde = history.clyde;
+let history = JSON.parse(readFileSync('history.json', {encoding: 'utf-8'}));
 
 const log = (...args: string[]) => console.log(`[LOG] ${args.join(' ')}`);
 const info = (...args: string[]) => console.info(`[INFO] ${args.join(' ')}`);
@@ -75,9 +74,9 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
         log(`@${interaction.user.tag} ran /${interaction.commandName}`);
         if (command.execute)
             try {
-                await command.execute(interaction, interaction.commandName === 'clyde'? {history: historyClyde, updateCallback: newHistory => {
-                    historyClyde = newHistory;
-                    writeFileSync('history.json', JSON.stringify({clyde: historyClyde}, undefined, 4));
+                await command.execute(interaction, interaction.commandName === 'chat'? {history: history, updateCallback: newHistory => {
+                    history = newHistory;
+                    writeFileSync('history.json', JSON.stringify(history, undefined, 4));
                 }} : {client: client});
             } catch (err) {
                 error(`Command ${interaction.commandName} failed:`, err);
