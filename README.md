@@ -23,5 +23,5 @@ This is a very basic user-installable Discord bot with an AI-based chatbot comma
     * If the Makefile doesn't work, you can compile and run it yourself with these commands
         * `mkdir dist`
         * `tsc --outDir dist --target ES2021 --module commonjs`
-        * `node dist/Index.js` # Use `node dist\Index.js` on w*ndows
+        * `node dist/Index.js` Use `node dist\Index.js` on w*ndows
         * (UNTESTED, PLEASE [OPEN AN ISSUE](https://github.com/DiamantOpp/discordjs-userinstall/issues/new) IF THIS DOES NOT WORK)
