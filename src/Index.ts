@@ -70,7 +70,7 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
             try {
                 await command.execute(
                     interaction,
-                    interaction.commandName === 'chat'? {history: history, updateCallback: newHistory => {
+                    interaction.commandName === 'chat' || interaction.commandName === 'clear'? {history: history, updateCallback: newHistory => {
                         history = newHistory;
                         writeFileSync('history.json', JSON.stringify(history, undefined, 4));
                     }}:
