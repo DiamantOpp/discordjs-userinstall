@@ -58,8 +58,9 @@ module.exports = {
         }).then(async (res: Response) => {
             if (!res.ok)
                 return interaction.editReply(`:x: ${res.status} ${res.statusText}`);
-            return res.json().then(data => data.choices[0].message.content)
+            return res.json().then(data => data.error? ':x: Unknown error' : data.choices[0].message.content);
         });
+        if (typeof(reply) !== 'string') return;
         log(`AI to @${interaction.user.username}: ${reply}`);
         history[index].push({role: 'assistant', content: reply});
         properties.updateCallback(history);
